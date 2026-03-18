@@ -786,7 +786,7 @@
       <h3>🔒 Change Password</h3>
       <div class="auth-field" style="margin-top:14px">
         <label class="f-label">New Password</label>
-        <input type="password" class="auth-input" id="new-pass" placeholder="Min. 6 characters" />
+        <input type="password" class="auth-input" id="new-pass" placeholder="Min. 8 chars, upper, lower, number, symbol" />
       </div>
       <div class="auth-field">
         <label class="f-label">Confirm New Password</label>
@@ -1044,9 +1044,13 @@ async function doChangePassword() {
   const confirmPass = document.getElementById('confirm-pass').value;
   const msg         = document.getElementById('change-pw-msg');
 
-  if (!newPass || !confirmPass) { showMsg(msg, 'Please fill in both fields.', 'err'); return; }
-  if (newPass.length < 6)       { showMsg(msg, 'Password must be at least 6 characters.', 'err'); return; }
-  if (newPass !== confirmPass)  { showMsg(msg, 'Passwords do not match.', 'err'); return; }
+  if (!newPass || !confirmPass)          { showMsg(msg, 'Please fill in both fields.', 'err'); return; }
+  if (newPass.length < 8)               { showMsg(msg, '❌ Password must be at least 8 characters.', 'err'); return; }
+  if (!/[a-z]/.test(newPass))           { showMsg(msg, '❌ Password must include at least one lowercase letter.', 'err'); return; }
+  if (!/[A-Z]/.test(newPass))           { showMsg(msg, '❌ Password must include at least one uppercase letter.', 'err'); return; }
+  if (!/[0-9]/.test(newPass))           { showMsg(msg, '❌ Password must include at least one number.', 'err'); return; }
+  if (!/[^a-zA-Z0-9]/.test(newPass))    { showMsg(msg, '❌ Password must include at least one special character (e.g. !@#$%).', 'err'); return; }
+  if (newPass !== confirmPass)           { showMsg(msg, '❌ Passwords do not match.', 'err'); return; }
 
   showMsg(msg, 'Updating password…', '');
   try {
