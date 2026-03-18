@@ -14,6 +14,11 @@
   <meta name="theme-color" content="#c9a227" />
   <meta name="mobile-web-app-capable" content="yes" />
   <meta name="description" content="Kpemi's Scripture Quest 1.0 — guess the book, chapter and verse for points!" />
+
+  <!-- Always fetch fresh version — prevent browser caching -->
+  <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate" />
+  <meta http-equiv="Pragma"        content="no-cache" />
+  <meta http-equiv="Expires"       content="0" />
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600;700;900&family=Crimson+Text:ital,wght@0,400;0,600;1,400;1,600&family=Lato:wght@300;400;700&display=swap" rel="stylesheet" />
@@ -533,7 +538,11 @@
       </div>
       <div class="auth-field">
         <label>Password</label>
-        <input type="password" class="auth-input" id="signup-pass" placeholder="Min. 6 characters" />
+        <input type="password" class="auth-input" id="signup-pass" placeholder="Min. 8 chars, upper, lower, number, symbol" />
+      </div>
+      <div class="auth-field">
+        <label>Confirm Password</label>
+        <input type="password" class="auth-input" id="signup-pass-confirm" placeholder="Re-enter your password" />
       </div>
       <div class="auth-msg" id="signup-msg"></div>
       <button class="btn-auth" onclick="doSignup()">Create Account ✝</button>
@@ -951,14 +960,20 @@ async function doLogin() {
 }
 
 async function doSignup() {
-  const username = document.getElementById('signup-user').value.trim();
-  const email    = document.getElementById('signup-email').value.trim();
-  const pass     = document.getElementById('signup-pass').value;
-  const msg      = document.getElementById('signup-msg');
+  const username    = document.getElementById('signup-user').value.trim();
+  const email       = document.getElementById('signup-email').value.trim();
+  const pass        = document.getElementById('signup-pass').value;
+  const passConfirm = document.getElementById('signup-pass-confirm').value;
+  const msg         = document.getElementById('signup-msg');
 
-  if (!username || !email || !pass) { showMsg(msg, 'Please fill in all fields.', 'err'); return; }
-  if (username.length < 3) { showMsg(msg, 'Username must be at least 3 characters.', 'err'); return; }
-  if (pass.length < 6)     { showMsg(msg, 'Password must be at least 6 characters.', 'err'); return; }
+  if (!username || !email || !pass || !passConfirm) { showMsg(msg, 'Please fill in all fields.', 'err'); return; }
+  if (username.length < 3)          { showMsg(msg, 'Username must be at least 3 characters.', 'err'); return; }
+  if (pass.length < 8)              { showMsg(msg, '❌ Password must be at least 8 characters.', 'err'); return; }
+  if (!/[a-z]/.test(pass))          { showMsg(msg, '❌ Password must include at least one lowercase letter.', 'err'); return; }
+  if (!/[A-Z]/.test(pass))          { showMsg(msg, '❌ Password must include at least one uppercase letter.', 'err'); return; }
+  if (!/[0-9]/.test(pass))          { showMsg(msg, '❌ Password must include at least one number.', 'err'); return; }
+  if (!/[^a-zA-Z0-9]/.test(pass))   { showMsg(msg, '❌ Password must include at least one special character (e.g. !@#$%).', 'err'); return; }
+  if (pass !== passConfirm)          { showMsg(msg, '❌ Passwords do not match. Please try again.', 'err'); return; }
 
   showMsg(msg, 'Creating account…', '');
 
